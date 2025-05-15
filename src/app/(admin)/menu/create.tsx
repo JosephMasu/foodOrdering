@@ -1,12 +1,31 @@
 import Button from '@/src/components/Button';
-import {View, Text, StyleSheet, TextInput} from 'react-native';
+import {View, Text, StyleSheet, TextInput, Image} from 'react-native';
 import { useState } from 'react';
+import { defaultPizzaImage } from '@/src/components/ProductListItem';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import * as ImagePicker from 'expo-image-picker';
+import { Stack } from 'expo-router';
+
 
 
 const CreateProductScreen = () => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [error, setError] = useState('');
+    const [image, setImage] = useState<string | null>(null);
+
+    const PickImage = async() => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if(!result.canceled){
+            setImage(result.assets[0].uri);
+        }
+    }
 
     const resetFields = ()=>{
 
@@ -47,6 +66,11 @@ const CreateProductScreen = () => {
     }
     return(
         <View style={styles.container}>
+            <Stack.Screen options={{title: 'Create Product'}}/>
+            <Image source={{uri:image || defaultPizzaImage}} style={styles.image}/>
+            <Text style= {styles.imgLabel} onPress={PickImage}>Select Image</Text>
+
+
             <Text style= {styles.label}>Name</Text>
             <TextInput 
                 value={name} 
@@ -87,6 +111,19 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginBottom: 20,
         marginTop:5
+    },
+    image:{
+        width: '50%',
+        aspectRatio: 1,
+        alignSelf: 'center',
+        marginBottom: 20,
+    },
+    imgLabel:{
+        alignSelf: 'center',
+        marginBottom: 10, 
+        fontWeight: 'bold',
+        color: Colors.light.tint,
+        
     }
 });
 
