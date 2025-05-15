@@ -3,10 +3,13 @@ import { View, Text, Image, StyleSheet, Pressable } from "react-native";
 import products from "@/assets/data/products";
 import { defaultPizzaImage } from "@/src/components/ProductListItem";
 import { useState } from "react";
-import Button from "@/src/components/Button";
 import { useCart } from "@/src/providers/CartProvider";
 import { PizzaSize } from "@/src/types";
 import { useRouter } from "expo-router";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Link } from 'expo-router';
+import Colors from '@/src/constants/Colors';
+
 
 const ProductDetailsScreen = () =>{
     const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
@@ -34,25 +37,33 @@ const ProductDetailsScreen = () =>{
     }
     return(
         <View style={styles.container}>
-            <Stack.Screen options={{title:product?.name}} />
+        <Stack.Screen 
+        options={{
+            title: "Menu",
+            headerRight: () => (
+                <Link href={`/(admin)/menu/create?id=${id}`} asChild>
+                <Pressable>
+                    {({ pressed }) => (
+                    <FontAwesome
+                        name="pencil"
+                        size={25}
+                        color={Colors.light.tint}
+                        style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                    />
+                    )}
+                </Pressable>
+                </Link>
+            ),
+        }}/>
+            <Stack.Screen options={{title:product.name}} />
             <Image 
                 source = {{uri:product.image || defaultPizzaImage}} 
                 style = {styles.image}
                 resizeMode='contain'>
             </Image>
-            {/* <Text>Select size:</Text> */}
-            {/* <View style={styles.sizes}>
-                {sizes.map(size => (
-                    <Pressable 
-                        onPress={() => setSelectedSize(size)}
-                        style = {[styles.size, { backgroundColor: selectedSize === size ? 'gainsboro':'white'}]} key={size}>
-                        <Text style={[styles.sizeText, { color: selectedSize === size ? 'black':'gray'}]}>{size}</Text>                    
-                    </Pressable>
-                ))}
-            </View> */}
+
             <Text style={ styles.name}>${product.name}</Text>
             <Text style={ styles.price}>${product.price}</Text>
-            {/* <Button onPress={addToCart} text="Add to cart"/> */}
         </View>
     );
 };
@@ -77,6 +88,5 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     }
 });
-
 
 export default ProductDetailsScreen;
