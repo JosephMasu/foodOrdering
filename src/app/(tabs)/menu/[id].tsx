@@ -6,6 +6,7 @@ import { useState } from "react";
 import Button from "@/src/components/Button";
 import { useCart } from "@/src/providers/CartProvider";
 import { PizzaSize } from "@/src/types";
+import { useRouter } from "expo-router";
 
 const ProductDetailsScreen = () =>{
     const sizes: PizzaSize[] = ['S', 'M', 'L', 'XL'];
@@ -13,12 +14,15 @@ const ProductDetailsScreen = () =>{
 
     const {addItem} = useCart();
 
+    const router = useRouter();
+
     const [selectedSize, setSelectedSize] = useState<PizzaSize>('M');
     const product = products.find(p => p.id.toString() === id);
 
     const addToCart  = ()=>{
         if(!product) return;
         addItem(product, selectedSize);  
+        router.push('/cart');
     };
 
     if(!product){
