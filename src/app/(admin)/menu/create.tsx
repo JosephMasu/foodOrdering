@@ -5,7 +5,7 @@ import { defaultPizzaImage } from '@/src/components/ProductListItem';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useInsertProduct, useProduct, useUpadateProduct } from '@/src/api/products';
+import { useDeleteProduct, useInsertProduct, useProduct, useUpadateProduct } from '@/src/api/products';
 
 const CreateProductScreen = () => {
     const [name, setName] = useState('');
@@ -20,8 +20,9 @@ const CreateProductScreen = () => {
 
     const {mutateAsync: insertProduct} = useInsertProduct();
     const {mutateAsync: updateProduct} = useUpadateProduct();
-
     const {data: updatingProduct} = useProduct(id);
+    const {mutate: deleteProduct} = useDeleteProduct();
+
 
     const router = useRouter();
 
@@ -114,7 +115,11 @@ const CreateProductScreen = () => {
     }
 
     const onDelete = ()=>{
-        console.log('deleting product');
+        deleteProduct(id,{
+            onSuccess:() =>{
+                router.replace('/(admin)');
+            },
+        }) ;
     }
 
     const confirmDelete = () =>{
