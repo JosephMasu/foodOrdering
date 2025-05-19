@@ -1,6 +1,5 @@
 import { supabase } from "@/src/lib/supabase";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { ToastAndroid } from "react-native";
 export const useProductList =()=>{
     return useQuery({
         queryKey: ['products'],
@@ -49,3 +48,28 @@ export const useInsertProduct =()=>{
         }
     });
 }  
+export const useUpadateProduct =()=>{
+    const queryClient = useQueryClient();
+    return useMutation({
+        async mutationFn(data:any) {
+            const {data:UpdatedProduct, error} = await supabase.from('products').update({
+                name:data.name,
+                image:data.image,
+                price:data.price,
+            })
+            .eq('id', data.id)
+            .select()
+            .single();
+            if (error) {
+                throw new Error(error.message);
+              }
+              return UpdatedProduct;
+
+        },
+        async onSuccess(_,{data}) {
+            await queryClient.invalidateQueries({queryKey:['products']});
+            await queryClient.invalidateQueries({queryKey:['products', data.id]});
+            
+        }
+    });
+}

@@ -1,13 +1,11 @@
 import Button from '@/src/components/Button';
 import {View, Text, StyleSheet, TextInput, Image, Alert} from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { defaultPizzaImage } from '@/src/components/ProductListItem';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useInsertProduct } from '@/src/api/products';
-
-
+import { useInsertProduct, useProduct, useUpadateProduct } from '@/src/api/products';
 
 const CreateProductScreen = () => {
     const [name, setName] = useState('');
@@ -15,11 +13,25 @@ const CreateProductScreen = () => {
     const [error, setError] = useState('');
     const [image, setImage] = useState<string | null>(null);
 
-    const {id} = useLocalSearchParams();
-    const isUpdating = !!id;
+    const {id:idString} = useLocalSearchParams();
+    const id = typeof idString === 'string' ? idString : idString?.[0];
+
+    const isUpdating = !!id;  
 
     const {mutateAsync: insertProduct} = useInsertProduct();
+    const {mutateAsync: updateProduct} = useUpadateProduct();
+
+    const {data: updatingProduct} = useProduct(id);
+
     const router = useRouter();
+
+    useEffect(()=>{
+        if(updatingProduct){
+            setName(updatingProduct.name);
+            setPrice(updatingProduct.price.toString());
+            setImage(updatingProduct.image);
+        }
+    }, [updatingProduct]);
 
 
 
@@ -67,10 +79,11 @@ const CreateProductScreen = () => {
 
     const onCreate = ()=>{
         console.log('creating product', name, price);
-        insertProduct({name, price:parseFloat(price), image}, {onSuccess:() =>{
+        insertProduct({name, price:parseFloat(price), image}, 
+        {onSuccess:() =>{
             resetFields();
-            router.back();
         }});
+        router.back();
         if(!validateInputs()){
             return;
         };
@@ -82,6 +95,14 @@ const CreateProductScreen = () => {
         if(!validateInputs()){
             return;
         };
+        updateProduct({id, name, price:parseFloat(price), image},       
+            {
+                onSuccess:() =>{
+                resetFields();
+            },
+        }
+    );
+    router.back();
     } 
 
     const onSubmit = () =>{
