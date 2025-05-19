@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { defaultPizzaImage } from '@/src/components/ProductListItem';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import * as ImagePicker from 'expo-image-picker';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useInsertProduct } from '@/src/api/products';
 
 
 
@@ -16,6 +17,10 @@ const CreateProductScreen = () => {
 
     const {id} = useLocalSearchParams();
     const isUpdating = !!id;
+
+    const {mutateAsync: insertProduct} = useInsertProduct();
+    const router = useRouter();
+
 
 
     const PickImage = async() => {
@@ -62,7 +67,10 @@ const CreateProductScreen = () => {
 
     const onCreate = ()=>{
         console.log('creating product', name, price);
-        resetFields();
+        insertProduct({name, price:parseFloat(price), image}, {onSuccess:() =>{
+            resetFields();
+            router.back();
+        }});
         if(!validateInputs()){
             return;
         };
@@ -70,7 +78,7 @@ const CreateProductScreen = () => {
 
     const onUpdate = ()=>{
         console.log('updating product', name, price);
-        resetFields();
+        resetFields();  
         if(!validateInputs()){
             return;
         };
