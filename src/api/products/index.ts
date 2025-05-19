@@ -18,7 +18,7 @@ export const useProduct = (id:string) =>{
         queryKey: ['products', id],
 
         queryFn: async () => {
-          const { data, error } = await supabase.from('products').select('*').eq('id', id).single();
+          const { data, error } = await supabase.from('products').select('*').eq('id', Number (id)).single();
           if (error) {
             throw new Error(error.message);
           }
@@ -78,7 +78,7 @@ export const useDeleteProduct =()=>{
     const queryClient = useQueryClient();
     return useMutation({
         async mutationFn(id:string){            
-            const {error}=await supabase.from('products').delete().eq('id', id);
+            const {error}=await supabase.from('products').delete().eq('id', Number(id));
             if (error) {
                 throw new Error(error.message);
               }
