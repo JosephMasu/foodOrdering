@@ -7,7 +7,7 @@ import { supabase } from '@/src/lib/supabase';
 import { Alert } from 'react-native';
 
 
-const SignInScreen = () => {
+const SignInScreen = () => { 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
