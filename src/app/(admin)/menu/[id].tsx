@@ -1,5 +1,5 @@
 import { Stack, useLocalSearchParams } from "expo-router";
-import { View, Text, Image, StyleSheet, Pressable } from "react-native";
+import { View, Text, Image, StyleSheet, Pressable, ActivityIndicator } from "react-native";
 import products from "@/assets/data/products";
 import { defaultPizzaImage } from "@/src/components/ProductListItem";
 import { useState } from "react";
@@ -39,7 +39,7 @@ const ProductDetailsScreen = () =>{
         );
     }
     if (isLoading) {
-        return <Text>Loading...</Text>;
+        return <ActivityIndicator />;
         }
         if (error) {
         return <Text>Error: {error.message}</Text>;
