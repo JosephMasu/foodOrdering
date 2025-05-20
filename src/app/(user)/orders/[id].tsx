@@ -4,6 +4,7 @@ import OrderListItem from "@/src/components/OrderListItem"
 import { FlatList } from "react-native"
 import OrderItemListItem from "@/src/components/OrderItemListItem"
 import { useOrderDetails } from "@/src/api/orders"
+import { useUpdateOrderSubscription } from "@/src/api/orders/subscrption"
 
 
 export default function OrderDetailsScreen(){
@@ -11,9 +12,13 @@ export default function OrderDetailsScreen(){
     const id = parseFloat (typeof idString === 'string' ? idString : idString[0]);    
 
     const {data:order, error, isLoading} = useOrderDetails(id);
+    useUpdateOrderSubscription(id);
     
     if(isLoading) return <Text>Loading...</Text>
     if(error) return <Text>Error: {error.message}</Text>
+    if (!order) {
+        return <Text>Order not found</Text>
+      }
 
     return( 
         <View style={{  padding:10, gap:10 }}>
