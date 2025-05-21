@@ -27,7 +27,7 @@ export const useUpdateOrderSubscription = (id: number) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const orders = supabase
+    const orders = supabase 
       .channel('custom-filter-channel')
       .on(
         'postgres_changes',

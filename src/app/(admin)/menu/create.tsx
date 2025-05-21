@@ -1,11 +1,16 @@
 import Button from '@/src/components/Button';
-import {View, Text, StyleSheet, TextInput, Image, Alert} from 'react-native';
+import {View, Text, StyleSheet, TextInput, Image, Alert, ActivityIndicator} from 'react-native';
 import { useEffect, useState } from 'react';
 import { defaultPizzaImage } from '@/src/components/ProductListItem';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useDeleteProduct, useInsertProduct, useProduct, useUpadateProduct } from '@/src/api/products';
+import { supabase } from '@/src/lib/supabase';
+import { decode } from 'base64-arraybuffer';
+import { randomUUID } from 'expo-crypto';
+import * as FileSystem from 'expo-file-system';
+
 
 const CreateProductScreen = () => {
     const [name, setName] = useState('');
@@ -22,7 +27,7 @@ const CreateProductScreen = () => {
     const {mutateAsync: updateProduct} = useUpadateProduct();
     const {data: updatingProduct} = useProduct(id);
     const {mutate: deleteProduct} = useDeleteProduct();
-
+    const [isLoading, setIsLoading] = useState(false);
 
     const router = useRouter();
 
@@ -78,16 +83,23 @@ const CreateProductScreen = () => {
 
     }
 
-    const onCreate = ()=>{
-        console.log('creating product', name, price);
-        insertProduct({name, price:parseFloat(price), image}, 
-        {onSuccess:() =>{
-            resetFields();
-        }});
-        router.back();
+    const onCreate = async ()=>{
         if(!validateInputs()){
             return;
         };
+
+        const imagePath = await uploadImage();
+
+        insertProduct(
+                {name, price:parseFloat(price), image:imagePath}, 
+                {
+                    onSuccess:() =>{
+                        resetFields();
+                        router.back();
+                    },
+                }
+        );
+
     }
 
     const onUpdate = ()=>{
@@ -111,7 +123,7 @@ const CreateProductScreen = () => {
             onUpdate();
         }else{
             onCreate();
-        }
+        } 
     }
 
     const onDelete = ()=>{
@@ -137,12 +149,34 @@ const CreateProductScreen = () => {
         ]);
     
     }
+    const uploadImage = async () => {
+        if (!image?.startsWith('file://')) {
+          return image;
+        }
+      
+        const base64 = await FileSystem.readAsStringAsync(image, {
+          encoding: 'base64',
+        });
+        const filePath = `${randomUUID()}.png`;
+        const contentType = 'image/png';
+        const { data, error } = await supabase.storage
+          .from('product-images')
+          .upload(filePath, decode(base64), { contentType });
+        console.log(error);
+        if (data) {
+          return data.path;
+        }
+      };
+      
     return(
         <View style={styles.container}>
             <Stack.Screen options={{title:isUpdating ? 'Update Product' : 'Create Product'}}/>
             <Image source={{uri:image || defaultPizzaImage}} style={styles.image}/>
             <Text style= {styles.imgLabel} onPress={PickImage}>Select Image</Text>
 
+            {isLoading && (
+                <ActivityIndicator size="large" color="#0000ff" style={{ marginVertical: 20 }} />
+            )}
 
             <Text style= {styles.label}>Name</Text>
             <TextInput 
@@ -162,7 +196,7 @@ const CreateProductScreen = () => {
             />
             
             <Text style={{color:'red'}}>{error}</Text>
-            <Button onPress={onSubmit} text={isUpdating ? 'Update product' : 'Create product'}/>
+            <Button onPress={onSubmit} text={isUpdating ? 'Update product' : 'Create product'} disabled={isLoading}/>
             {isUpdating && <Text style={{color:'red', textAlign:'center', marginBottom: 10}} onPress={confirmDelete}>Delete product</Text>}
         </View>
     );
