@@ -1,6 +1,7 @@
 import {
     createContext,
     PropsWithChildren,
+    useContext,
     useEffect,
     useState,
   } from "react";
@@ -29,30 +30,38 @@ import {
   
     useEffect(() => {
       const fetchSession = async () => {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session },} = await supabase.auth.getSession();
         setSession(session);
+        setLoading(false);
+      };
+      fetchSession();
 
-        if (session) {
-          // fetch profile
+      const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session);
+      });
+
+      return () => {
+        authListener?.subscription.unsubscribe();
+      };
+    }, []);
+
+    useEffect(() => {
+      if (!session) {
+        setProfile(null);
+        return;
+      }
+      const fetchProfile = async () => {
+          setLoading(true);
           const { data } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
             .single();
           setProfile(data || null);
-        }
-        setLoading(false);
+          setLoading(false);
       };
-      fetchSession();
-  
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange((_event, session) => {
-        setSession(session);
-      });
-  
-      return () => subscription.unsubscribe();
-    }, []);
+      fetchProfile();
+      },[session]);
 
     console.log(profile);
   
@@ -62,4 +71,4 @@ import {
       </AuthContext.Provider>
     );
   }
-  
+  export const useAuth = () => useContext(AuthContext);
