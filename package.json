@@ -41,7 +41,9 @@
     "react-native-screens": "~4.10.0",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "~0.20.0",
-    "react-native-websocket": "^1.0.2"
+    "react-native-websocket": "^1.0.2",
+    "@stripe/stripe-react-native": "0.45.0",
+    "expo-constants": "~17.1.6"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
