@@ -11,6 +11,7 @@ import AuthProvider from '../providers/AuthProvider';
 import QueryProvider from '../providers/QueryProvider';
 import {StripeProvider } from '@stripe/stripe-react-native';
 import Constants from 'expo-constants';
+import NotificationProvider from '../providers/NotificationProvider';
 
 export {
   ErrorBoundary,
@@ -54,14 +55,16 @@ function RootLayoutNav() {
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <AuthProvider>
           <QueryProvider>
-            <CartProvider>
-              <Stack>
-                <Stack.Screen name="(admin)" options={{ headerShown: false }} />
-                <Stack.Screen name="(user)" options={{ headerShown: false }} />
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="cart" options={{ presentation: 'modal' }} />
-              </Stack>
-            </CartProvider>
+            <NotificationProvider>
+              <CartProvider>
+                <Stack>
+                  <Stack.Screen name="(admin)" options={{ headerShown: false }} />
+                  <Stack.Screen name="(user)" options={{ headerShown: false }} />
+                  <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                  <Stack.Screen name="cart" options={{ presentation: 'modal' }} />
+                </Stack>
+              </CartProvider>
+            </NotificationProvider>
           </QueryProvider>
         </AuthProvider>
       </ThemeProvider>
