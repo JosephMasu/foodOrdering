@@ -55,7 +55,7 @@ export interface Database {
           id: number
           status: string
           total: number
-          user_id: string | null
+          user_id: string 
         }
         Insert: {
           created_at?: string
@@ -113,6 +113,8 @@ export interface Database {
           updated_at: string | null
           username: string | null
           website: string | null
+          expo_push_token: string | null
+        
         }
         Insert: {
           avatar_url?: string | null
@@ -131,6 +133,7 @@ export interface Database {
           updated_at?: string | null
           username?: string | null
           website?: string | null
+          expo_push_token?: string | null
         }
         Relationships: [
           {

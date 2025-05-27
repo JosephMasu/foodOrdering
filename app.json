@@ -36,7 +36,11 @@
       "typedRoutes": true
     },
     "extra": {
-      "EXPO_NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_test_51PhuswGL5EXs55eNlX2UMAuqf7JzFZFkEV9DW7dyNw0hr4YbSeS7SDwL3apsM8owVHmJB2U2o7ErkrS6lEtZCoFR00CXomeRkU"
+      "EXPO_NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "pk_test_51PhuswGL5EXs55eNlX2UMAuqf7JzFZFkEV9DW7dyNw0hr4YbSeS7SDwL3apsM8owVHmJB2U2o7ErkrS6lEtZCoFR00CXomeRkU",
+      "router": {},
+      "eas": {
+        "projectId": "4ef93c56-3dbc-4c34-8ac1-4b14abe6e7eb"
+      }
     }
   }
 }

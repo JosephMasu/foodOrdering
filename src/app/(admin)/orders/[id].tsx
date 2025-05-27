@@ -7,6 +7,7 @@ import OrderItemListItem from "@/src/components/OrderItemListItem"
 import { OrderStatusList } from "@/src/types"
 import Colors from "@/src/constants/Colors"
 import { useOrderDetails, useUpadateOrder } from "@/src/api/orders"
+import { notifyUserAboutOrders } from "@/src/lib/notification"
 
 
 export default function OrderDetailsScreen(){
@@ -21,8 +22,11 @@ export default function OrderDetailsScreen(){
     if(!order){
         return<Text>Order not found</Text>
     }
-  const updateStatus = (status:string)=>{
-    updateOrder({id:id, updatedFields:{status}})
+  const updateStatus = async(status:string) => {
+    await updateOrder({id:id, updatedFields:{status}});
+    if(order){
+      await notifyUserAboutOrders({...order, status});
+    }
   }
 
     return( 
