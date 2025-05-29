@@ -52,7 +52,7 @@ const ProductDetailsScreen = () =>{
                 style = {styles.image}
                 resizeMode='contain'>
             </RemoteImage>
-            <Text>Select size:</Text>
+            <Text style={{marginLeft:10}}>Select size:</Text>
             <View style={styles.sizes}>
                 {sizes.map(size => (
                     <Pressable 
@@ -82,7 +82,8 @@ const styles = StyleSheet.create({
     price: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginTop: 'auto',
+        marginLeft: 10,
+        marginTop: 110,
     },
     size: {
         backgroundColor:'gainsboro',

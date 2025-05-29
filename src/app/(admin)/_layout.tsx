@@ -1,12 +1,11 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Redirect, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
-
+import { Redirect, Tabs } from 'expo-router';
+import { StyleSheet } from 'react-native';
 import Colors from '@/src/constants/Colors';
-import { useColorScheme } from '@/src/components/useColorScheme';
-import { useClientOnlyValue } from '@/src/components/useClientOnlyValue';
 import { useAuth } from '@/src/hooks/useAuth';
+import { Platform, useColorScheme } from 'react-native';
+import { useClientOnlyValue } from '@/src/components/useClientOnlyValue';
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -26,11 +25,16 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.light.background,
-        tabBarInactiveTintColor: 'gainsboro',
-        tabBarStyle:{
-          backgroundColor: Colors.light.tint,
-        }
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarShowLabel: true,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+          marginBottom: 6,
+        },
+        tabBarStyle: styles.tabBar,
+        headerShown: useClientOnlyValue(false, true),
+        tabBarHideOnKeyboard: true,
       }}>
       <Tabs.Screen name='index' options={{href: null}}/>
       <Tabs.Screen
@@ -52,3 +56,26 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+    right: 16,
+    elevation: 8,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    height: 60,
+    margin: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowRadius: 12,
+    borderTopWidth: 0,
+    paddingBottom: Platform.OS === 'android' ? 10 : 20,
+  },
+});
